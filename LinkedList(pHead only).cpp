@@ -1,84 +1,197 @@
-#include <iostream>
-// Cau truc du lieu cua danh sach lien ket don
-//bat dau voi khoi tao cau truc Node
+#include<iostream>
 struct Node{
     int data;
     Node *pNext;
-
 };
-//Khoi tao Node moi
-Node *createNode(int d)
-{
-    Node *pNode = new Node;
-    if(pNode != NULL)
-    {
-        pNode->data = d;
-        pNode->pNext = NULL;
-    }
-    else
-    {
-        std::cout<<"Error Allocated Memory";
-    }
-    return pNode;
-}
 
-//Khoi tao cau truc cua danh sach lien ket voi 1 node quan ly la pHead
 struct SingleList{
     Node *pHead;
 };
 
-//Khoi tao danh sach lien ket, do chua co Node moi nen Node dau tien cua danh sach luon la Null
 void initialize(SingleList &List)
 {
     List.pHead = NULL;
 }
-void printList(SingleList List)
+
+Node *createNode(int d)
 {
-    Node *nodeTmp = List.pHead;
-    if(nodeTmp == NULL)
+    //Dynamic Memory
+
+    Node *pNode = new Node;
+    if(pNode!= NULL) //Memory Allocated Successful
     {
-        std::cout<<"This List is empty";
+        pNode->data = d;
+        pNode->pNext = NULL;
+    }
+
+    else {
+        std::cout<<"Can't Allocate new Space for memory";
+    }
+}
+
+void printList(SingleList &List)
+{
+    Node *pTmp = List.pHead;
+    if(pTmp == NULL)
+    {
+        std::cout<<"\n This List is empty";
         return;
     }
-    while(nodeTmp != NULL)
+    while(pTmp != NULL)
     {
-        std::cout<<nodeTmp->data<<" ";
-        nodeTmp = nodeTmp->pNext;
+        std::cout<<pTmp->data<<" ";
+        pTmp= pTmp->pNext;
     }
 }
 
-int sizeOfList(SingleList List)
+int CountNode(SingleList List)
 {
-    Node *nodeTmp = List.pHead;
-    int nSize = 0;
-    while(nodeTmp != NULL)
+    Node *pTmp = List.pHead;
+    int counter = 0;
+    while(pTmp != NULL)
     {
-        nodeTmp = nodeTmp->pNext;
-        nSize++;
+        pTmp= pTmp->pNext;
+        counter++;
     }
-    return nSize;
-
+    return counter;
 }
-
-void insertFirst(SingleList List, int d)
+void insertFirst(SingleList &List, int d)
 {
     Node *pNode = createNode(d);
     if(List.pHead == NULL)
     {
         List.pHead = pNode;
     }
-    else
-    {
+    else{
         pNode->pNext = List.pHead;
-        List.pHead= pNode;
+        List.pHead = pNode;
     }
 }
-int main(int argc, char** argv)
+void insertLast(SingleList &List, int d)
+{
+    Node *pNode = createNode(d);
+    if(List.pHead == NULL)
+    {
+        List.pHead = pNode;
+    }
+    else{
+        Node *pTmp = List.pHead;
+        while(pTmp->pNext != NULL)
+        {
+           pTmp = pTmp->pNext;
+        }
+    pTmp->pNext = pNode;
+    }
+}
+void insertMid(SingleList &List, int pos, int d)
+{
+
+    if(pos < 0 || pos >= CountNode(List))
+    {
+        std::cout<<"Not Valid position to insert";
+        return;
+    }
+    if(pos == 0)
+        insertFirst(List,d);
+    else if(pos == CountNode(List)- 1)
+        insertLast(List,d);
+
+    else
+    {
+        Node *pNode = createNode(d);
+        Node *pIns = List.pHead;
+        Node *pPre =NULL;
+        int i = 0;
+        while(pIns != NULL)
+        {
+            if(i==pos)
+                break;
+            pPre=pIns;
+            pIns= pIns->pNext;
+            i++;
+        }
+        pPre->pNext =pNode;
+        pNode->pNext = pIns;
+    }
+}
+
+Node * searchNode(SingleList List, int data)
+{
+    Node *pTmp = List.pHead;
+    while(pTmp != NULL)
+    {
+        if(pTmp->data == data)
+            break;
+        pTmp = pTmp->pNext;
+    }
+    return pTmp;
+}
+void removeNode(SingleList &list, int d)
+{
+    Node *pDel=list.pHead;
+    if(pDel==NULL)
+    {
+        std::cout<<"\n The List is empty!";
+    }
+    else
+    {
+        Node *pPre = NULL;
+        while(pDel!=NULL)
+        {
+            if(pDel->data==d)
+                break;
+            pPre=pDel;
+            pDel=pDel->pNext;
+        }
+        if(pDel == NULL)
+        {
+            std::cout << "\nError: Variable '" << d << "' not found.";
+        }
+        else
+        {
+            if(pDel==list.pHead)
+            {
+                list.pHead=list.pHead->pNext;
+                pDel->pNext=NULL;
+                delete pDel;
+                pDel = NULL;
+            }
+            else
+            {
+                pPre->pNext=pDel->pNext;
+                pDel->pNext = NULL;
+                delete pDel;
+                pDel=NULL;
+            }
+        }
+    }
+}
+int main()
 {
     SingleList List;
     initialize(List);
     insertFirst(List,10);
-    insertFirst(List,5);
-    insertFirst(List,9);
+    insertFirst(List,3);
+    insertFirst(List,7);
+    insertFirst(List,8);
     printList(List);
+
+    //insertMid(List, 2, 4);
+    std::cout<<"\n Node is found ";
+    Node *psearch = searchNode(List,3);
+    if(psearch != NULL)
+    {
+        std::cout<<psearch->data;
+    }
+    else{
+        std::cout<<"NULL";
+    }
+
+    removeNode(List, 9);
+
+
+    removeNode(List, 10);
+    std::cout<<"\n New List :";
+    printList(List);
+
 }
