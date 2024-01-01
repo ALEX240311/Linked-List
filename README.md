@@ -1,3 +1,3 @@
 # Linked-List
-For Praticing Data Structure & Algorithm 
+Practice Data Structure & Algorithm Coding
 
